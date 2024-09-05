@@ -151,8 +151,8 @@ function Recipes() {
     const queryParams = new URLSearchParams(recipeInputs).toString();
     console.log(queryParams)
     // Open an SSE connection with these query parameters
-    setUrl(`http://localhost:3001/recipeStream?${queryParams}`);
-    console.log(url)
+    setUrl(`https://fit-buddy-backend.onrender.com/recipeStream?${queryParams}`);
+    // console.log(url)
     eventSourceRef.current = new EventSource(url);
 
     eventSourceRef.current.onerror = () => {
