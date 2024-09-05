@@ -112,11 +112,13 @@
 import express from "express";
 import cors from "cors";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import {marked , Marked}from 'marked'
-import dotenv from 'dotenv';
+import { marked } from "marked";
+import dotenv from "dotenv";
+import process from 'process';
 dotenv.config();
 
-const apiKey = process.env.GOOGLE_API_KEY;
+// get api key
+const apiKey = process.env.API_KEY;
 
 const app = express();
 const PORT = 3001;
@@ -129,11 +131,10 @@ app.use(cors());
 app.use(express.json());
 
 const sendEvent = (res, response) => {
-    // console.log(response);
-    res.send(response);
-  };
+  // console.log(response);
+  res.send(response);
+};
 
-  
 app.get("/recipeStream", async (req, res) => {
   try {
     res.setHeader("Content-Type", "text/event-stream");
@@ -151,28 +152,37 @@ app.get("/recipeStream", async (req, res) => {
     prompt.push(`[Cooking Time: ${cookingTime}]`);
     prompt.push(`[Complexity: ${complexity}]`);
     prompt.push();
+    prompt.push("Highlight recipe name in bold");
 
     prompt.push(
-        "Please provide a detailed recipe, including steps for preparation and cooking. Only use the ingredients provided."
-      );
-      prompt.push(
-        "The recipe should highlight the fresh and vibrant flavors of the ingredients."
-      );
-      prompt.push(
-        "Also give the recipe a suitable name in its local language based on cuisine preference."
-      );
+      "Please provide a detailed recipe, including steps for preparation and cooking. Only use the ingredients provided."
+    );
+    prompt.push(
+      "The recipe should highlight the fresh and vibrant flavors of the ingredients."
+    );
+    prompt.push(
+      "Also give the recipe a suitable name in its local language based on cuisine preference."
+    );
     // const prompt1 = "Generate a simple recipe for a vegetable salad.";
 
     const result = await model.generateContent(prompt);
 
     const response = result.response;
 
-    if (response && response.candidates && response.candidates[0] && response.candidates[0].content && response.candidates[0].content.parts) {
-        const generatedText = marked(response.candidates[0].content.parts.map(part => part.text).join("\n"));
-        // console.log("Generated Text:", generatedText);
-        sendEvent(res, generatedText);
-      } else {
-        console.log("No valid response structure found.");
+    if (
+      response &&
+      response.candidates &&
+      response.candidates[0] &&
+      response.candidates[0].content &&
+      response.candidates[0].content.parts
+    ) {
+      const generatedText = marked(
+        response.candidates[0].content.parts.map((part) => part.text).join("\n")
+      );
+      // console.log("Generated Text:", generatedText);
+      sendEvent(res, generatedText);
+    } else {
+      console.log("No valid response structure found.");
     }
   } catch (error) {
     console.error("Error generating content:", error);
