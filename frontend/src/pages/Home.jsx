@@ -82,11 +82,13 @@ function Home() {
             <h1 className="text-4xl pb-6 text-center font-bold text-[#2E8B57]"> FitBuddy</h1>
               <h2 className="text-2xl font-semibold mb-16 text-center text-black">
           {isSignIn ? "Sign In" : "Sign Up"}
+        <p className="text-xs">Trial Email - test123@gmail.com</p>
+        <p  className="text-xs">Trial Password - test@password</p>
         </h2>
 
         {!userSigned && (
           <button
-            onClick={signInWithGoogle}
+          onClick={signInWithGoogle}
             className="p-2 border-2 border-black font-medium text-black rounded w-full mb-4"
           >
             Sign in with Google
